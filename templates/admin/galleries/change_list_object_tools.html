@@ -1,0 +1,38 @@
+{% load i18n admin_urls %}
+
+{% block object-tools-items %}
+  {% if has_add_permission %}
+  <li>
+    {% url cl.opts|admin_urlname:'add' as add_url %}
+    <a href="{% add_preserved_filters add_url is_popup to_field %}" class="addlink">
+      {% blocktranslate with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktranslate %}
+    </a>
+  </li>
+  {% block import-data %}
+  <li>
+    {% url cl.opts|admin_urlname:'import' as import_url %}
+    <a href="{% add_preserved_filters import_url is_popup to_field %}" class="addlink">
+      Import Data
+    </a>
+  </li>
+  {% endblock import-data %}
+  {% block export-data %}
+  <li>
+    {% url cl.opts|admin_urlname:'export' as export_url %}
+    <a href="{% add_preserved_filters export_url is_popup to_field %}" class="addlink">
+      Export Data
+    </a>
+  </li>
+  {% endblock export-data %}
+  {% endif %}
+{% endblock %}
+
+{% comment %}
+'cl' means changelist 
+    cl = self.get_changelist_instance(request)
+'cl.opts' means model meta information
+    self.opts = model._meta
+'admin_urlname' is defined in django.contrib.admin.templatetags.admin_urls
+    def admin_urlname(value, arg):
+      return "admin:%s_%s_%s" % (value.app_label, value.model_name, arg)
+{% endcomment %}
