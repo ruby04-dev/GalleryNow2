@@ -1,3 +1,4 @@
+from django.forms import ModelForm
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -21,8 +22,8 @@ class Gallery(models.Model):
     # 21 fields
     name = models.CharField(max_length=255)
     management_type = models.CharField(max_length=255)
-    address_old = models.CharField(max_length=255)
     address_new = models.CharField(max_length=255)
+    address_old = models.CharField(max_length=255)
     latitude = models.CharField(max_length=255)
     longitude = models.CharField(max_length=255)
     contact = models.CharField(max_length=255)
@@ -46,3 +47,9 @@ class Gallery(models.Model):
 
     class Meta:
         verbose_name_plural = "Galleries"
+
+
+class ReadOnlyGalleryForm(ModelForm):
+    class Meta:
+        model = Gallery
+        fields = "__all__"

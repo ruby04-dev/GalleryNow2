@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load common_tags %}
+
+{% block content %}
+
+<h1>gallery item, pk =  {{ gallery_item.pk }}</h1>
+
+
+{% get_model_fields gallery_item as fields %}
+{% for field, value in fields %}
+    <p>{{ field }}: {{ value }}</p>
+{% endfor %}
+
+{% endblock content %}
+
+

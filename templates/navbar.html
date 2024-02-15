@@ -1,0 +1,76 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+
+<!-- navbar -->
+<!-- 상단바 구분을 위해 회색으로 -> 추후에 하얀색으로 변경할 것 -->
+<nav class="navbar mx-1 sticky-top bg-white">
+  <div class="container-fluid">
+    <a href="#">
+      <img width="150" src="https://cdn.discordapp.com/attachments/1100972580598468638/1106479953089937408/2023-05-12_4.14.51.png" alt="logo"/>
+    </a>
+    <div style="font-size: 2.5rem; font-weight: bolder">
+      <a href="#" style="text-decoration-line:none; color: inherit;">
+        NOW
+      </a>
+    </div>
+
+    {% comment %} {% if user.is_authenticated %} {% endcomment %}
+
+      {% comment %} <!-- nav 로그인한 상태 -->
+      <div class="d-flex text-center justify-content-end align-items-center px-3">
+        <!-- 프로필 이미지 : 클릭하면 사용자 프로필 페이지로 이동 -->
+        <a class="px-1" style="text-decoration-line:none;" href="{% url 'accounts:profile' user.nickname %}">
+          {% if user.profile_image %}
+            <img src="{{ user.profile_image.url }}" alt="post_image" class="rounded-circle" height="35">
+          {% else %}
+            <img src="https://i.pinimg.com/564x/d2/98/4e/d2984ec4b65a8568eab3dc2b640fc58e.jpg" alt="no_image" class="rounded-circle" height="35">
+          {% endif %}
+        </a>
+
+        <!-- 드롭다운 시작-->
+        <div class="nav-item dropdown px-2">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ user.nickname }}
+          </a>
+          <!-- 드롭다운 펼쳤을 때 목록 -->
+          <div class="mt-1 dropdown-menu dropdown-menu-end" style="max-width: 10px;">
+            <li>
+              <a class="dropdown-item" href="{% url 'accounts:profile' user.nickname %}">My page</a>
+            </li>
+            <li>
+              <a class=" dropdown-item" href="{% url 'accounts:update' %}">setting</a>
+            </li>
+            <li>
+              <a class=" dropdown-item" href="{% url 'accounts:change_password' %}">change_password</a>
+            </li>
+            <hr class="dropdown-divider">
+            <form action="{% url 'accounts:logout' %}" method="POST">
+              {% csrf_token %}
+              <input type="submit" value="Logout" class="dropdown-item">
+            </form>
+          </div>
+        </div>
+      </div>
+
+    {% else %}
+
+      <!-- nav 로그아웃 상태 -->
+      <div class="d-flex gap-1 justify-content-end text-center align-items-end">
+        <button class="btn btn-outline-dark border-radius" type="submit">
+          <a href="{% url 'accounts:login' %}" style="text-decoration-line:none; color: inherit;">
+            Login
+          </a>
+        </button>
+        <button class="btn btn-outline-dark border-radius" type="submit">
+          <a href="{% url 'accounts:signup' %}" style="text-decoration-line:none; color: inherit;">
+            Signup
+          </a>
+        </button>
+      </div>
+
+    {% endif %} {% endcomment %}
+
+  </div>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>

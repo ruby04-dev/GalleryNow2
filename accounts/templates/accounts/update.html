@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}
+  Profile update
+{% endblock title %}
+{% block content %}
+  <div class="container">
+    <div class="d-flex justify-content-end align-items-center" style="position:absolute; margin-left:60%">
+      <div>
+        <a href="{% url 'accounts:change_password' %}" class="btn btn-outline-primary">비밀번호 변경</a>
+      </div>
+      <form action="{% url 'accounts:delete' %}" method="POST" id="delete">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}" />
+        <input
+        class="btn btn-outline-danger my-3"
+        onclick="confirmDelete(event)"
+        type="submit"
+        value="회원 탈퇴"
+        style="margin-left: 12px"
+        />
+      </form>
+    </div>
+    <h1 class="mt-5 text-center">회원정보 수정</h1>
+    <hr class="mx-auto" style="width:95%;">
+    <div class="mx-auto mt-5 d-flex justify-content-center" style="width: 700px;">
+      <form action="{% url 'accounts:update' %}" method="POST" enctype="multipart/form-data" class="d-grid w-50 gap-2">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="d-grid gap-2">
+          <input type="submit" value="Update" class="btn btn-dark border-radius p-2">
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  
+{% endblock content %}
+
+<script>
+  function confirmDelete(event) {
+    event.preventDefault()
+
+    if (confirm("정말로 탈퇴하시겠습니까?")) {
+      document.querySelector("#delete").submit()
+    }
+  }
+</script>

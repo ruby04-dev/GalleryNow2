@@ -10,16 +10,12 @@ from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.template.response import SimpleTemplateResponse, TemplateResponse
 from django.utils.translation import gettext as _
 
-
 # Register your models here.
 from .models import Gallery, Log
 import pandas as pd
 
 
 class GalleryAdmin(admin.ModelAdmin):
-    # def add_view(self, request, form_url="", extra_context=None):
-    #     print("form_url: ", form_url)
-    #     return self.changeform_view(request, None, form_url, extra_context)
 
     def get_urls(self):
         info = self.opts.app_label, self.opts.model_name
