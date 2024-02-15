@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  Profile
+{% endblock title %}
+{% block style %}
+  <style>
+    @font-face {
+      font-family: 'GowunDodum-Regular';
+      src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff") format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    .ff {
+      font-family: 'GowunDodum-Regular';
+    }
+
+    .box {
+      border: 1px solid black;
+      border-radius: 12px;
+    }
+
+  </style>
+{% endblock style %}
+
+{% block content %}
+  <div class="container ff">
+
+    <!-- 프로필 이미지 -->
+    <h1 class="mt-5 text-center">
+      <div class="mb-2">
+        {% if person.profile_image %}
+          <img src="{{ person.profile_image.url }}" alt="post_image" class="rounded-circle" width="100">
+        {% else %}
+          <img src="https://i.pinimg.com/564x/d2/98/4e/d2984ec4b65a8568eab3dc2b640fc58e.jpg" alt="no_image" class="rounded-circle" width="100">
+        {% endif %}
+      </div>
+      {% if person.is_admin %}
+        <div>{{ person.nickname }}
+          <p>(관리자)</p>
+        </div>
+      {% else %}
+        <div>
+          {{ person.nickname }}
+        </div>
+      {% endif %}
+    </h1>
+
+    <!-- 팔로워/팔로잉 수 -->
+    <div class="text-center">팔로워
+      <span id="followers-count">
+        {{ person.followers.all|length }}</span>
+      <span>/</span>팔로잉
+      <span id="followings-count">
+        {{ person.followings.all|length }}</span>
+    </div>
+
+    <!-- 다른 사용자 프로필 : 팔로우/언팔로우 버튼 -->
+    <!-- 본인 프로필 : 회원정보 수정 버튼 -->
+    <div class="text-center mt-3">
+      {% if request.user.is_authenticated %}
+        {% if user.nickname != person.nickname %}
+          <form class="mt-2" id="follow-form" data-user-id="{{ person.pk }}">
+            {% csrf_token %}
+            {% if request.user in person.followers.all %}
+              <input type="submit" value="언팔로우" class="btn btn-dark" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+            {% else %}
+              <input type="submit" value="팔로우" class="btn btn-dark" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+            {% endif %}
+          </form>
+        {% else %}
+          <a href="{% url 'accounts:update' %}" class="button btn btn-outline-dark" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">회원정보 수정</a>
+        {% endif %}
+      {% endif %}
+    </div>
+    <hr>
+
+    <!-- navbar : Exhibition | Artist | followings | Review -->
+    <ul class="nav nav-tabs mt-5" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="Exhibition-tab" data-bs-toggle="tab" data-bs-target="#Exhibition-tab-pane" type="button" role="tab" aria-controls="Exhibition-tab-pane" aria-selected="true" style="text-decoration-line:none; color: black;">Exhibition</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="Review-tab" data-bs-toggle="tab" data-bs-target="#Review-tab-pane" type="button" role="tab" aria-controls="Review-tab-pane" aria-selected="false" style="text-decoration-line:none; color: black;">Review</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="followings-tab" data-bs-toggle="tab" data-bs-target="#followings-tab-pane" type="button" role="tab" aria-controls="followings-tab-pane" aria-selected="false" style="text-decoration-line:none; color: black;">followings</button>
+      </li>
+      {% comment %} <li class="nav-item" role="presentation">
+        <button class="nav-link" id="Artist-tab" data-bs-toggle="tab" data-bs-target="#Artist-tab-pane" type="button" role="tab" aria-controls="Artist-tab-pane" aria-selected="false" style="text-decoration-line:none; color: black;">Artist</button>
+      </li> {% endcomment %}
+    </ul>
+
+    <!-- navbar : content -->
+    <div class="tab-content mt-5" id="myTabContent">
+      <!-- Exhibition -->
+      <div class="tab-pane fade show active" id="Exhibition-tab-pane" role="tabpanel" aria-labelledby="Exhibition-tab" tabindex="0">
+        <h2>좋아요한 전시회</h2>
+        <hr>
+        <div class="m-4">
+          {% for exhibition in person.like_exhibitions.all %}
+            <a class="tag_a row px-2" href="{% url 'posts:detail' exhibition.pk %}">
+              <div class="col-3" style="height: 150px;">
+                <img src="{{ exhibition.thumbnail.url }}" alt="전시회_포스터" style="margin:auto;" enctype="multipart/form-data" height="150px">
+              </div>
+              <div class="col-9">
+                <div class="mt-4 text-start pb-1" style="font-size:20px; font-weight: 300;">{{ exhibition.title }}</div>
+                <div class="text-secondary text-start pt-1" style="font-size:15px;">일정 :{{ exhibition.period }}</div>
+                <div class="text-secondary text-start pt-1" style="font-size:15px;">시간 :{{ exhibition.time }}</div>
+              </div>
+            </a>
+            <hr class="mx-auto text-secondary" style="width:100%;">
+          {% endfor %}
+        </div>
+      </div>
+      <!-- Review -->
+      <div class="tab-pane fade" id="Review-tab-pane" role="tabpanel" aria-labelledby="Review-tab" tabindex="0">
+        <h4>나의 리뷰</h4>
+        <hr>
+        <div class="my-4">
+          {% for review in person.review_set.all %}
+            <a class="tag_a row px-2" href="{% url 'posts:detail' review.exhibition.pk %}">
+              <div class="col-3" style="height: 150px;">
+                <img src="{{ review.exhibition.thumbnail.url }}" alt="전시회_포스터" style="margin:auto;" enctype="multipart/form-data" height="150px">
+              </div>
+              <div class="col-9">
+                <div class="mt-4 text-start pb-1" style="font-size:20px; font-weight: 300;">{{ review.exhibition.title }}</div>
+                <div class="text-secondary text-start pt-1" style="font-size:15px;">{{ review.content }}</div>
+              </div>
+            </a>
+            <hr class="mx-auto text-secondary" style="width:100%;">
+          {% endfor %}
+        </div>
+      </div>
+      <!-- followings -->
+      <div class="tab-pane fade" id="followings-tab-pane" role="tabpanel" aria-labelledby="followings-tab" tabindex="0">
+        <h4>팔로잉 목록</h4>
+        <hr>
+        <div class="">
+          <div class="my-2 d-flex">
+            {% for followings in person.followings.all %}
+              <a class="tag_a d-flex justify-content-center align-items-center text-center box p-2 m-1" href="{% url 'accounts:profile' followings.nickname %}" style="height: auto;">
+                {% if user.profile_image %}
+                  <img src="{{ user.profile_image.url }}" alt="post_image" class="rounded-circle" width="25" height="25">
+                {% else %}
+                  <img src="https://i.pinimg.com/564x/d2/98/4e/d2984ec4b65a8568eab3dc2b640fc58e.jpg" alt="no_image" class="rounded-circle" width="25" height="25">
+                {% endif %}
+                <div class="ps-2" style="font-size: 15px;">{{ followings.nickname }}</div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% comment %} <!-- Artist -->
+      <div class="tab-pane fade" id="Artist-tab-pane" role="tabpanel" aria-labelledby="Artist-tab" tabindex="0">
+        <h4>선호하는 작가</h4>
+        <hr>
+        <div></div>
+      </div> {% endcomment %}
+      <!-- navbar : content end -->
+    </div>
+
+  </div>
+{% endblock content %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="{% static 'js/profile.js' %}"></script>
+  <script>
+    const triggerTabList = document
+      .querySelectorAll('#myTab button')triggerTabList
+      .forEach(triggerEl => {
+        const tabTrigger = new bootstrap
+          .Tab(triggerEl)triggerEl
+          .addEventListener('click', event => {
+            event
+              .preventDefault()tabTrigger
+              .show()
+          })
+      })
+  </script>
+{% endblock script %}

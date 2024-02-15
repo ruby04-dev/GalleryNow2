@@ -1,0 +1,11 @@
+{% extends 'base.html' %} {% block content %}
+<ul>
+  {% for gallery in gallery_list %}
+
+  <p><a href={% url 'galleries:detail' gallery.pk %}>{{ gallery.name }} : 
+  {{ gallery.address_new | truncatechars:20 }}</a></p>
+  
+  {% endfor %}
+</ul>
+
+{% endblock content %}

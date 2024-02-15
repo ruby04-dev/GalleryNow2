@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}
+  Login
+{% endblock title %}
+{% block content %}
+  <div class="container">
+    <h1 class="mt-5 text-center">로그인</h1>
+    <hr>
+    <div class="mx-auto mt-5 d-flex justify-content-center" style="width: 700px;">
+      <form action="{% url 'accounts:login' %}" method="POST" class="d-grid w-50 gap-2">
+        {% csrf_token %}
+        <div class="d-flex">
+          <div class="row gap-2">
+          <label for="username" class="ps-3">이메일:</label>
+            <!-- name항목이 username이어야 로그인 정상 작동함 -->
+            <div>
+              <input
+              type="username"
+              class="form-control"
+              name="username"
+              id="username"
+              />
+            </div>
+            <!-- password -->
+            <label for="password" class="ps-3">비밀번호:</label>
+            <div>
+              <input
+              type="password"
+              class="form-control"
+              name="password"
+              id="password"
+              />
+            </div>
+          </div>
+        </div>
+        {% comment %} {{ form.email }}
+        {{ form.password }} {% endcomment %}
+        {% comment %} {{ form.as_p }} {% endcomment %}
+        <div class="d-grid gap-2">
+          <input type="submit" value="Login" class="btn btn-dark border-radius p-2">
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock content %}
